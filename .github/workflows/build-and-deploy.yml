@@ -20,8 +20,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
-          # package-lock.json이 ai 폴더에 없다면 cache-dependency-path 옵션은 제거합니다.
+          # 캐시 옵션 제거 (의존성 잠금 파일이 루트에 없으므로)
+          # cache: 'npm'
           # cache-dependency-path: ai/package-lock.json
 
       - name: List AI directory
