@@ -1,12 +1,18 @@
 {
   "name": "model2",
   "version": "1.0.0",
-  "description": "- Python 확장팩 - REST Client 확장팩 설치 - Rainbow CSV 확장팩 설치 - $ bash install.sh 실행",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.0.0"
+  }
 }
