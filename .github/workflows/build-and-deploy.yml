@@ -20,23 +20,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          # 캐시 옵션 제거 (의존성 잠금 파일이 루트에 없으므로)
-          # cache: 'npm'
-          # cache-dependency-path: ai/package-lock.json
 
-      - name: List AI directory
-        run: ls -al ./ai
+      - name: List model2 directory
+        run: ls -al ./model2
 
       - name: Install Dependencies
-        working-directory: ./ai
+        working-directory: ./model2
         run: npm ci
 
       - name: Build Project
-        working-directory: ./ai
+        working-directory: ./model2
         run: npm run build
 
       - name: Build Docker Image
-        working-directory: ./ai
+        working-directory: ./model2
         run: |
           docker build -t asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ktb-ai/my-ai:v1 .
 
