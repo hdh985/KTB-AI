@@ -20,14 +20,15 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # read_csv file
-df = pd.read_csv('/workspaces/haker_AI/model2/sample_data.csv')
-target = pd.read_json("/workspaces/haker_AI/model2/input_med.json")["key"].tolist() # 리스트 형태
+root_path = "/Users/jaeseoksee/Documents/code/KTB-AI/model2"
+df = pd.read_csv(f'{root_path}/sample_data.csv')
+target = pd.read_json(f"{root_path}/input_med.json")["key"].tolist() # 리스트 형태
 target_df = df[df['제품명'].isin(target)]
 df_indexed = target_df.set_index('제품명')
-df_indexed.to_json("/workspaces/haker_AI/model2/target_data.json", orient='index', force_ascii=False, indent=4)
+df_indexed.to_json(f'{root_path}//target_data.json', orient='index', force_ascii=False, indent=4)
 
 # load json2dict data
-json_file_path = "/workspaces/haker_AI/model2/target_data.json"
+json_file_path = "/Users/jaeseoksee/Documents/code/KTB-AI/model2/target_data.json"
 with open(json_file_path, 'r', encoding='utf-8') as f:
     target_data_dict = json.load(f)
 
@@ -64,6 +65,7 @@ class ChatModel:
             input_messages_key="question",
             history_messages_key="history",
         )
+        self.max_history_length = 10  # 히스토리 길이 제한 추가
 
     async def chat(self, message: str, session_id: str = "default_session"):
         try:
@@ -74,11 +76,21 @@ class ChatModel:
             result = await self.app.ainvoke(state, config={"configurable": {"thread_id": session_id}})
             ai_message = result["messages"][-1]
             self.chat_message_history.add_message(ai_message)
-            return {"content":ai_message}
+            self._trim_history(session_id) # 히스토리 트리밍 추가
+            return {ai_message.content}
         except Exception as e:
             logging.error(f"Error in chat: {e}")
             raise e
-    
+
+    def _trim_history(self, session_id):
+        history = SQLChatMessageHistory(session_id=session_id, connection="sqlite:///sqlite.db")
+        messages = history.messages
+        if len(messages) > self.max_history_length:
+            trimmed_messages = messages[-self.max_history_length:]
+            history.clear()
+            for message in trimmed_messages:
+                history.add_message(message)
+
     async def _call_model(self, state: State):
             past_messages = self.chat_message_history.messages
             all_messages = past_messages + state["messages"]
