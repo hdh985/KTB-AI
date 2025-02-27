@@ -1,0 +1,5 @@
+fastapi==0.95.2
+uvicorn[standard]==0.22.0
+langchain==0.0.148
+pydantic==1.10.12
+# 추가로 필요한 패키지가 있다면 여기에 추가합니다.
