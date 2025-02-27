@@ -1,5 +1,7 @@
 import uvicorn
 import server
+import chatmodel_server
+
 
 app = server.app
 
